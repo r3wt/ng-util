@@ -24,6 +24,11 @@ angular
 					}
 					returned[i] = 1;
 					if(returned.indexOf(0) == -1){
+						if(errors.toString().replace(/,/g,'') == ''){
+							errors = null;
+						}else{
+							errors.join("\r\n----------\r\n");
+						}
 						callbackFn(errors,results);
 					}
 				}
@@ -49,6 +54,11 @@ angular
 					results.push(result);
 				}
 				if(items.length == 0){
+					if(errors.toString().replace(/,/g,'') == ''){
+						errors = null;
+					}else{
+						errors.join("\r\n----------\r\n");
+					}
 					return callbackFn(errors,results);
 				}else{
 					//pop first item, pass it to eachCb with the next function
@@ -80,21 +90,23 @@ angular
 			if(!$('#'+id).length){
 				var el = document.createElement(type);
 				if(type == 'link'){
+					
 					el.rel = 'stylesheet';
 					el.href = url;
 					el.id = id;
 					document.head.appendChild(el);
+					cb();
 				}
 				else if(type == 'script'){
+					
 					el.id = id;
 					el.src = url;
-					listenOnce(el,'load',cb);
-					listenOnce(el,'error',err);
+					el.addEventListener('load',function(){ cb(); },false);
+					el.addEventListener('error',function(){ err(arguments); },false);
 					document.body.appendChild(el);
 				}
-				
-				document.head.appendChild(el);
 			}else{
+				
 				cb();
 			}
 		},
@@ -108,27 +120,35 @@ angular
 				var items = arguments[0];
 			}
 			
+			
+			
 			var _self = this;
 
 			return $q(function(resolve,reject){
 				if(items.length == 0){
+					
 					return resolve();
 				}
 				_self.async( items, function(item,next){
 					if(item.indexOf('.js') != -1){
-						_self.loadOne('script',item,next,next);	
+						_self.loadOne('script',item,next,function(err){
+							next(err);
+						});	
 					}
 					else if(item.indexOf('.css') != -1){
-						_self.loadOne('link',items);
-						next();
+						_self.loadOne('link',item,next);
 					}else{
-						console.log('unknown load type for file %s. skipping.',item);
+						
 						next();
 					}
 				},function(errors,results){
-					if(errors.length){
+					
+					
+					if(errors){
+						
 						reject(errors);
 					}else{
+						
 						resolve();
 					}
 				});
