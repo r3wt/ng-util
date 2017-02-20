@@ -1,0 +1,20 @@
+{
+  "name": "ng-utils",
+  "homepage": "https://github.com/r3wt/ng-utils",
+  "authors": [
+    "r3wt <gmorris_89@outlook.com>"
+  ],
+  "description": "\"collection of angular.js utilities in a factory\"",
+  "main": "",
+  "keywords": [
+    "angular.js"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
