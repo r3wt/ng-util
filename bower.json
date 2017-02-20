@@ -4,7 +4,7 @@
   "authors": [
     "r3wt <gmorris_89@outlook.com>"
   ],
-  "description": "\"collection of angular.js utilities in a factory\"",
+  "description": "collection of angular.js utilities in a factory",
   "main": "",
   "keywords": [
     "angular.js"
@@ -13,8 +13,6 @@
   "ignore": [
     "**/.*",
     "node_modules",
-    "bower_components",
-    "test",
-    "tests"
+	"npm-debug.log"
   ]
 }

@@ -1,3 +1,9 @@
+/**
+ * @package ng-utils
+ * @author Garrett Morris <gmorris_89@outlook.com>
+ * @license MIT
+ * @version 1.0.0
+ */
 angular
 .module('ng-utils',[])
 .factory('$utils',['$q',function($q){

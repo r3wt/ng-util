@@ -1,0 +1,26 @@
+{
+  "name": "ng-utils",
+  "version": "1.0.0",
+  "description": "Small utility library for angular.js",
+  "main": "gulpfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/r3wt/ng-utils.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/r3wt/ng-utils/issues"
+  },
+  "homepage": "https://github.com/r3wt/ng-utils#readme",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-rename": "^1.2.2",
+    "gulp-uglify": "^2.0.1",
+    "pump": "^1.0.2",
+    "uglify": "^0.1.5"
+  }
+}
