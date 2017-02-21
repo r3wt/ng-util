@@ -4,23 +4,23 @@ Small utility library for angular.js
 
 ### installing
 ------
-`bower install ng-utils --save`
+`bower install ng-util --save`
 
 ### usage
 ------
 1. include the script in page.
-`<script src="bower_components/ng-utils/dist/utils.min.js"></script>`
+`<script src="bower_components/ng-util/dist/util.min.js"></script>`
 
 2. add module as dependency to app
 
-`angular.module('myApp',['ng-utils'])`;
+`angular.module('myApp',['ng-util'])`;
 
 3. usage in controller.
-
+------
 ```js
-angular.module('myApp').controller('FooCtrl',['$utils',function($utils){
+angular.module('myApp').controller('FooCtrl',['$util',function($util){
 
-	$utils.async([1,2,3],function(item,next){
+	$util.async([1,2,3],function(item,next){
 		next(null,item * 3);
 	},function(errors,results){
 		if(errors) 
@@ -29,7 +29,7 @@ angular.module('myApp').controller('FooCtrl',['$utils',function($utils){
 			console.log(results);
 	});
 	
-	$utils.sync([1,2,3],function(item,next){
+	$util.sync([1,2,3],function(item,next){
 		next(null,item * 3);
 	},function(errors,results){
 		if(errors) 
@@ -38,7 +38,7 @@ angular.module('myApp').controller('FooCtrl',['$utils',function($utils){
 			console.log(results);
 	});
 	
-	$utils.load('/path/to/somefile.css','/path/to/somefile.js').then(function(){
+	$util.load('/path/to/somefile.css','/path/to/somefile.js').then(function(){
 		//do something
 	})
 	.catch(function(errors){
@@ -51,7 +51,7 @@ angular.module('myApp').controller('FooCtrl',['$utils',function($utils){
 ```
 
 4. usage in router as module loader (ui-router is shown).
-
+------
 ```js
 
 angular.module('myApp').config(['$stateProvider',function($stateProvider){
@@ -62,8 +62,8 @@ angular.module('myApp').config(['$stateProvider',function($stateProvider){
 			url: '/',
 			templateUrl: 'templates/app.html',
 			resolve: {
-				'loadDeps': ['$utils',function($utils){
-					return $utils.load('/path/to/myModule.js','/path/to/myModule.css'); //simply return the promise.
+				'loadDeps': ['$util',function($util){
+					return $util.load('/path/to/myModule.js','/path/to/myModule.css'); //simply return the promise.
 				}]
 			}
 		})
@@ -71,8 +71,8 @@ angular.module('myApp').config(['$stateProvider',function($stateProvider){
 
 ```
 
-5. spec
-
+### spec
+------
 1. `async` - void async( Array items, Function( item, next(error,result) ), Function( errors,results ) ) 
 	> async execution, guaranteed return order
 
