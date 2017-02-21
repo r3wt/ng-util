@@ -1,5 +1,5 @@
 {
-  "name": "ng-utils",
+  "name": "ng-util",
   "version": "1.0.0",
   "description": "Small utility library for angular.js",
   "main": "gulpfile.js",
@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/r3wt/ng-utils.git"
+    "url": "git+https://github.com/r3wt/ng-util.git"
   },
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/r3wt/ng-utils/issues"
+    "url": "https://github.com/r3wt/ng-util/issues"
   },
-  "homepage": "https://github.com/r3wt/ng-utils#readme",
+  "homepage": "https://github.com/r3wt/ng-util#readme",
   "devDependencies": {
     "gulp": "^3.9.1",
     "gulp-rename": "^1.2.2",
