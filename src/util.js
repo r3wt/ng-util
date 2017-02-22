@@ -147,7 +147,7 @@ angular
 						next();
 					}
 				},function(errors,results){
-					$rootScope.apply();
+					$rootScope.$apply();
 					if(errors){
 						
 						reject(errors);
