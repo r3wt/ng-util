@@ -6,7 +6,7 @@
  */
 angular
 .module('ng-util',[])
-.factory('$util',['$q',function($q){
+.factory('$util',['$rootScope','$q',function($rootScope,$q){
 	
 	function $util(){}
 	
@@ -132,7 +132,6 @@ angular
 
 			return $q(function(resolve,reject){
 				if(items.length == 0){
-					
 					return resolve();
 				}
 				_self.async( items, function(item,next){
@@ -148,8 +147,7 @@ angular
 						next();
 					}
 				},function(errors,results){
-					
-					
+					$rootScope.apply();
 					if(errors){
 						
 						reject(errors);
@@ -160,7 +158,18 @@ angular
 				});
 			});
 			
-		}
+		},
+		
+		// String uuid_v4()
+		// Taken from: http://stackoverflow.com/a/2117523/2401804
+		uuid_v4 : function() {
+			return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+				var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+				return v.toString(16);
+			});
+		},
+		
+		
 		
 	};
 	

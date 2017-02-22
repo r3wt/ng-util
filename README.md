@@ -55,7 +55,7 @@ angular.module('myApp').controller('FooCtrl',['$util',function($util){
 ```js
 
 angular.module('myApp').config(['$stateProvider',function($stateProvider){
-		$stateProvider
+	$stateProvider
 		.state({
 			name: 'foo',
 			controller: 'FooCtrl',
@@ -71,7 +71,7 @@ angular.module('myApp').config(['$stateProvider',function($stateProvider){
 
 ```
 
-### spec
+### factory `$utils`
 ------
 1. `async` - void async( Array items, Function( item, next(error,result) ), Function( errors,results ) ) 
 	> async execution, guaranteed return order
@@ -82,4 +82,10 @@ angular.module('myApp').config(['$stateProvider',function($stateProvider){
 3. `load` - Promise load( Array files )
 	> async load dependencies. returns promise. can be used anywhere $utils can be injected. pass file path's as array or individual arguments.
 	
+4. `uuid_v4` - String uuid_v4()
+	> generates an RFC 4122 (v4) compliant uuid and returns it as a string
 	
+### directives
+------
+
+soon
