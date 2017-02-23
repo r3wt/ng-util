@@ -177,4 +177,44 @@ angular
 	
 	return new $util();
 	
-}]);
+}])
+
+//directives
+
+// adds filechange listener to file elements, curiously missing from angularjs
+// <input ng-filechange="someFunc(files)" />
+.directive('ngFilechange', function() {
+  return {
+    restrict: 'A',
+	scope: {
+		ngFilechange: '&'
+	},
+    link: function (scope, element, attrs) {
+	  //var handler = scope[attrs.ngFilechange.replace(/\(.*\)/,'')]
+      element.bind('change', function() {
+        scope.$apply(function() {
+          var files = element[0].files;
+          if (files) {
+            scope.ngFilechange({ files: files });
+          }
+        });
+      });
+    }
+  };
+})
+
+
+// filters
+
+// same as php uc_words() function. capitalizes every word in string.
+// <span>{{ someProperty|uc_words }}</span> 
+.filter('uc_words', function() {
+    return function(input) {
+		var str = [];
+		var a = input.split(' ');
+		for(var i=0;i<a.length;i++){
+			if(!!a[i]) str.push(a[i].charAt(0).toUpperCase() + a[i].substr(1).toLowerCase());
+		}
+		return str.join(' ');
+    }
+});
