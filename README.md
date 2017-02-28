@@ -1,4 +1,4 @@
-### ng-utils
+### ng-util
 ------
 Small utility library for angular.js
 
@@ -71,7 +71,7 @@ angular.module('myApp').config(['$stateProvider',function($stateProvider){
 
 ```
 
-### factory `$utils`
+### factory `$util`
 ------
 1. `async` - void async( Array items, Function( item, next(error,result) ), Function( errors,results ) ) 
 	> async execution, guaranteed return order
@@ -88,4 +88,13 @@ angular.module('myApp').config(['$stateProvider',function($stateProvider){
 ### directives
 ------
 
-soon
+1. `ng-filechange`
+	> adds ng-filechange which is curiously missing from angular.js allows you to react to a filechange 
+	> usage `<input type="file" ng-filechange="someFunc(files)" />
+	
+### filters
+------
+
+1. `uc_words`
+	> same as the uc_words() function in php. it capitalized every word in a string and returns the resultant string.
+	> usage `<span>{{ title|uc_words }}`
