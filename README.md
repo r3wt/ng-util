@@ -88,13 +88,13 @@ angular.module('myApp').config(['$stateProvider',function($stateProvider){
 ### directives
 ------
 
-1. `ng-filechange`
+1. `ng-filechange` 
 	> adds ng-filechange which is curiously missing from angular.js allows you to react to a filechange 
 	> usage `<input type="file" ng-filechange="someFunc(files)" />
 	
 ### filters
 ------
 
-1. `uc_words`
+1. `uc_words` 
 	> same as the uc_words() function in php. it capitalized every word in a string and returns the resultant string.
 	> usage `<span>{{ title|uc_words }}`
