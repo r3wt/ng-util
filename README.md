@@ -90,7 +90,7 @@ angular.module('myApp').config(['$stateProvider',function($stateProvider){
 
 1. `ng-filechange` 
 	> adds ng-filechange which is curiously missing from angular.js allows you to react to a filechange 
-	> usage `<input type="file" ng-filechange="someFunc(files)" />
+	> usage `<input type="file" ng-filechange="someFunc(files)" />`
 	
 ### filters
 ------
