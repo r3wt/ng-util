@@ -8,11 +8,12 @@
 	
 	var mod = angular.module('ng-util',[]);
 
-	mod.config(['$controllerProvider','$filterProvider','$provide',function($controllerProvider,$filterProvider,$provide){
+	mod.config(['$controllerProvider','$compileProvider','$filterProvider','$provide',function($controllerProvider,$compileProvider,$filterProvider,$provide){
 		
 		mod.$controllerProvider = $controllerProvider;
 		mod.$filterProvider = $filterProvider;
 		mod.$provide = $provide;
+		mod.$compileProvider = $compileProvider;
 		
 		var map = {
 			controller: ['$controllerProvider','register'],
@@ -20,7 +21,9 @@
 			service: ['$provide','service'],
 			factory: ['$provide','factory'],
 			value: ['$provide','value'],
-			constant: ['$provide','constant']
+			constant: ['$provide','constant'],
+			directive: ['$compileProvider','directive'],
+			component: ['$compileProvider','component']
 		};
 		
 		var bootStrapped = [];
