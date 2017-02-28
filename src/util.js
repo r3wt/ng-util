@@ -206,7 +206,6 @@
 						}
 					},function(errors,results){
 						$timeout(function() {
-							$rootScope.$apply();// @Claies suggestion
 							if(errors){
 								reject(errors);
 							}else{
