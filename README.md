@@ -115,11 +115,13 @@ app.config(['$utilProvider',function($utilProvider){
 	> loads dependencies. returns promise. can be used anywhere $utils can be injected. pass file path's as array or individual arguments.
 	> arguments are extracted and flattened so you can choose whichever syntax is most readable to you. 
 	> first argument can optionally make function behave async or sync. default is async. example:
-	>
-	> $util.load(true,['somefile.js','someotherfile.js']);//result = scripts loaded synchronously, one at a time.
-	> $util.load('sync','somefile.js','someotherfile.js');//result = same as above.
-	> $util.load([false,'somefile.js','someotherfile.js']);//result = scripts loaded async, which is default.
-	> $util.load('async','somefile.js',['someMoreFiles.js','anotherfile.js']); //result = same as above.
+	
+	```js
+	$util.load(true,['somefile.js','someotherfile.js']);//result = scripts loaded synchronously, one at a time.
+	$util.load('sync','somefile.js','someotherfile.js');//result = same as above.
+	$util.load([false,'somefile.js','someotherfile.js']);//result = scripts loaded async, which is default.
+	$util.load('async','somefile.js',['someMoreFiles.js','anotherfile.js']); //result = same as above.
+	```
 	
 4. `uuid_v4` - String uuid_v4()
 	> generates an RFC 4122 (v4) compliant uuid and returns it as a string
