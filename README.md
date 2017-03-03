@@ -71,6 +71,36 @@ angular.module('myApp').config(['$stateProvider',function($stateProvider){
 
 ```
 
+### configuration `$utilProvider`
+------
+> You can configure the module at run time like so:
+
+```js
+
+var app = angular.module('myApp',['$util']);
+
+app.config(['$utilProvider',function($utilProvider){
+
+	$utilProvider.config({
+		cacheBust: true, // cache busting when loading modules
+		extend: function($util){
+			//extend the service
+			$util.foo = function(){
+				console.log('hello world!');
+			};
+		}
+	});
+	
+}]);
+
+# options list
+--
+- `cacheBust` Boolean
+- `extend` Function
+
+
+
+
 ### factory `$util`
 ------
 1. `async` - void async( Array items, Function( item, next(error,result) ), Function( errors,results ) ) 
@@ -79,11 +109,22 @@ angular.module('myApp').config(['$stateProvider',function($stateProvider){
 2. `sync` - void sync( Array items, Function( item, next(error,result) ), Function( errors,results ) )
 	> sync execution, guaranteed return order
 	
-3. `load` - Promise load( Array files )
-	> async load dependencies. returns promise. can be used anywhere $utils can be injected. pass file path's as array or individual arguments.
+3. `load` - Promise load( Mixed|Array files )
+	> loads dependencies. returns promise. can be used anywhere $utils can be injected. pass file path's as array or individual arguments.
+	> arguments are extracted and flattened so you can choose whichever syntax is most readable to you. 
+	> first argument can optionally make function behave async or sync. default is async. example:
+	>
+	> $util.load(true,['somefile.js','someotherfile.js']);//result = scripts loaded synchronously, one at a time.
+	> $util.load('sync','somefile.js','someotherfile.js');//result = same as above.
+	> $util.load([false,'somefile.js','someotherfile.js']);//result = scripts loaded async, which is default.
+	> $util.load('async','somefile.js',['someMoreFiles.js','anotherfile.js']); //result = same as above.
 	
 4. `uuid_v4` - String uuid_v4()
 	> generates an RFC 4122 (v4) compliant uuid and returns it as a string
+	
+5. `flatten` - Array flatten( Array arr )
+	> flattens nested arrays.
+
 	
 ### directives
 ------
