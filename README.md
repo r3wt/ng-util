@@ -93,6 +93,8 @@ app.config(['$utilProvider',function($utilProvider){
 	
 }]);
 
+```
+
 # options list
 --
 - `cacheBust` Boolean
