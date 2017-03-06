@@ -2,6 +2,10 @@
 ------
 Small utility library for angular.js
 
+> Warning: Great effort is taken to ensure as small as possible size, while also maintaining performance. 
+> If you mess up, you may see extremely vague error messages. With this in mind, it might make sense to use 
+> unminified version for development, and minified for production.
+
 ### installing
 ------
 `bower install ng-util --save`
@@ -101,6 +105,52 @@ app.config(['$utilProvider',function($utilProvider){
 - `extend` Function
 
 
+### named dependencies lists
+
+```js
+
+var app = angular.module('myApp',['$util']);
+
+app.config(['$utilProvider','$stateProvider',function($utilProvider,$stateProvider){
+
+	$utilProvider.dependencies({
+		'Search': {
+			series: true,
+			files: ['/services/SearchService.js','/components/SearchComponent.js','/controllers/SearchController.js']
+		},
+		'Home': {
+			series: false,
+			files: ['/owl.carousel/owl.carousel.css','/ow.carousel/owl.carousel.min.js','/angular-owl-carousel2/angular-owl-carousel2.js','/controllers/HomeController.js']
+		}
+	});
+	
+	$stateProvider
+		.state({
+			name: 'index',
+			controller: 'HomeController',
+			url: '/',
+			templateUrl: 'templates/Home.html',
+			resolve: {
+				'loadDeps': ['$util',function($util){
+					return $util.loadDeps('Home');
+				}]
+			}
+		})
+		.state({
+			name: 'search',
+			controller: 'SearchController',
+			url: '/search?q&page&locale',
+			templateUrl: 'templates/Search.html',
+			resolve: {
+				'loadDeps': ['$util',function($util){
+					return $util.loadDeps('Search');
+				}]
+			}
+		})
+	
+}]);
+
+```
 
 
 ### factory `$util`
@@ -111,7 +161,7 @@ app.config(['$utilProvider',function($utilProvider){
 2. `sync` - void sync( Array items, Function( item, next(error,result) ), Function( errors,results ) )
 	> sync execution, guaranteed return order
 	
-3. `load` - Promise load( Mixed|Array files )
+3. `load` - Promise load( ...Array files )
 	> loads dependencies. returns promise. can be used anywhere $utils can be injected. pass file path's as array or individual arguments.
 	> arguments are extracted and flattened so you can choose whichever syntax is most readable to you. 
 	> first argument can optionally make function behave async or sync. default is async. example:
@@ -122,12 +172,18 @@ app.config(['$utilProvider',function($utilProvider){
 	$util.load([false,'somefile.js','someotherfile.js']);//result = scripts loaded async, which is default.
 	$util.load('async','somefile.js',['someMoreFiles.js','anotherfile.js']); //result = same as above.
 	```
+
+5. `loadDeps` - Promise loadDeps( ...Array dependencies )
+	> loads dependencies by key that have been defined using `$utilProvider.dependencies()` configuration function.
 	
-4. `uuid_v4` - String uuid_v4()
+6. `uuid_v4` - String uuid_v4()
 	> generates an RFC 4122 (v4) compliant uuid and returns it as a string
 	
-5. `flatten` - Array flatten( Array arr )
+7. `flatten` - Array flatten( Array arr )
 	> flattens nested arrays.
+	
+8. `random_init` - Number random_int( Number min, Number max )
+	> generates a random int between min and max (inclusive)
 
 	
 ### directives
