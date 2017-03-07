@@ -182,7 +182,7 @@ app.config(['$utilProvider','$stateProvider',function($utilProvider,$stateProvid
 7. `flatten` - Array flatten( Array arr )
 	> flattens nested arrays.
 	
-8. `random_init` - Number random_int( Number min, Number max )
+8. `random_int` - Number random_int( Number min, Number max )
 	> generates a random int between min and max (inclusive)
 
 	
