@@ -7,11 +7,6 @@
 !function(angular){
     
     var mod = angular.module('ng-util',[]);
-	
-	var style = document.createElement('style');
-	style.id = 'ng-util-styles';
-	document.head.appendChild(style);
-	
 
     mod.config(['$controllerProvider','$compileProvider','$filterProvider','$provide',function($controllerProvider,$compileProvider,$filterProvider,$provide){
         
