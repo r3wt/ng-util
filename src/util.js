@@ -377,5 +377,7 @@
             }
             return str.join(' ');
         }
-    }); 
+    });
+	
+	
 }(angular);
