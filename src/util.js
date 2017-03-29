@@ -63,7 +63,7 @@
         
     }]);
 
-    mod.provider('$util',function($log){
+    mod.provider('$util',function(){
         
         var _config = {
             cacheBust: false,
