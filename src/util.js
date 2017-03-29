@@ -2,7 +2,7 @@
  * @package ng-util
  * @author Garrett Morris <gmorris_89@outlook.com>
  * @license MIT
- * @version 1.0.4
+ * @version 1.0.9
  */
 !function(angular){
     

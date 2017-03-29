@@ -1,4 +1,4 @@
-### ng-util
+### ng-util 1.0.9
 ------
 Small utility library for angular.js
 
