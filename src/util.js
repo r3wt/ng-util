@@ -337,6 +337,28 @@
                     .replace(/&/g, '-and-')
                     .replace(/[\s\W-]+/g, '-')
                     .replace(/^-+|-+$/g, '');
+                },
+                
+                // approximate_count( Number number )
+                // taken from http://stackoverflow.com/a/3177857/2401804 (modified)
+                approximate_count: function getRepString( number )
+                {
+                    var formatted;
+    
+                    if (number < 1000) {
+                        formatted = number;
+                    }
+                    else if (number < 10000) {
+                        formatted = number.charAt(0) + ',' + number.substring(1);
+                    }
+                    else if (number < 1000000) {
+                        formatted = (Math.round((number / 1000) * 10) / 10)+'k';
+                    }
+                    else{
+                        formatted = (Math.round((number / 1000) * 10) / 10)+'m';
+                    }
+
+                    return formatted.toString();
                 }
                 
             };
