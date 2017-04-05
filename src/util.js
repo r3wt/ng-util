@@ -98,7 +98,7 @@
             
         };
         
-        this.$get = ['$timeout','$q',function($timeout,$q){
+        this.$get = ['$q',function($q){
         
             function $util(){
                 
@@ -195,7 +195,7 @@
                         url +='?_v='+(new Date()).getTime();
                     }
                     
-                    if(!$('#'+id).length){
+                    if(!angular.element(document.getElementById(id)).length){
                         var el = document.createElement(type);
                         if(type == 'link'){
                             
@@ -257,13 +257,11 @@
                                 next();
                             }
                         },function(errors,results){
-                            $timeout(function() {
-                                if(errors){
-                                    reject(errors);
-                                }else{
-                                    resolve();
-                                }
-                            });
+                            if(errors){
+                                reject(errors);
+                            }else{
+                                resolve();
+                            }
                         });
                     });
                     
@@ -292,13 +290,11 @@
                                 .catch(function(err){ next(err); });
                             
                         },function(errors,results){
-                            $timeout(function() {
-                                if(errors){
-                                    reject(errors);
-                                }else{
-                                    resolve();
-                                }
-                            });
+                            if(errors){
+                                reject(errors);
+                            }else{
+                                resolve();
+                            }
                         });
                         
                     });
