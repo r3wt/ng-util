@@ -46,7 +46,7 @@
                         c = c[d[i]];// recurse until reaching the function
                     }
                     //now inject the function into an IIFE so we ensure its scoped properly
-					//im not sure this is actually needed but i'm wary of for loops.
+                    //im not sure this is actually needed but i'm wary of for loops.
                     !function(app,type,c){
                         app[type] = function(){
                             c.apply(this,arguments);
@@ -69,34 +69,34 @@
             cacheBust: false,
             extend: function(){}
         };
-		
-		var _deps = {};
-		
-		var _dependencyDefaults = {
-			series: false,
-			files: []
-		};
+        
+        var _deps = {};
+        
+        var _dependencyDefaults = {
+            series: false,
+            files: []
+        };
         
         this.config = function(config){
             for(var key in config){
                 _config[key] = config[key];
             }
         };
-		
-		//adds a dependency to the dependencies, so its file(s) can be loaded by key.
-		this.dependencies = function( dependencies ) {
+        
+        //adds a dependency to the dependencies, so its file(s) can be loaded by key.
+        this.dependencies = function( dependencies ) {
 
-			for(var dependency in dependencies){
-				for(var prop in dependencyDefaults){
-					if(dependencies[dependency].hasOwnProperty(prop)){
-						_deps[dependency][prop] = dependencies[dependency][prop];
-					}else{
-						_deps[dependency][prop] = dependencyDefaults[prop];
-					}
-				}
-			}
-			
-		};
+            for(var dependency in dependencies){
+                for(var prop in dependencyDefaults){
+                    if(dependencies[dependency].hasOwnProperty(prop)){
+                        _deps[dependency][prop] = dependencies[dependency][prop];
+                    }else{
+                        _deps[dependency][prop] = dependencyDefaults[prop];
+                    }
+                }
+            }
+            
+        };
         
         this.$get = ['$timeout','$q',function($timeout,$q){
         
@@ -268,42 +268,42 @@
                     });
                     
                 },
-				
-				// Promise loadDeps( Array dependencies )
-				loadDeps: function(){
-					
-					args = Array.prototype.slice.call(arguments);
+                
+                // Promise loadDeps( Array dependencies )
+                loadDeps: function(){
+                    
+                    args = Array.prototype.slice.call(arguments);
                     args = this.flatten(args);//flatten args
-					
-					var _self = this;
-					
-					return $q(function(resolve,reject){
-						
-						_self.async(args,function(dependency,next){
-						
-							var dep = _deps[dependency] || false;
-							
-							if(!dep){
-								$log.warn('bad dependency `'+dependency+'` skipping loading');
-							}
-							
-							_self.load(dep.series,dep.files)
-								.then(function(){ next(); })
-								.catch(function(err){ next(err); });
-							
-						},function(errors,results){
-							$timeout(function() {
+                    
+                    var _self = this;
+                    
+                    return $q(function(resolve,reject){
+                        
+                        _self.async(args,function(dependency,next){
+                        
+                            var dep = _deps[dependency] || false;
+                            
+                            if(!dep){
+                                $log.warn('bad dependency `'+dependency+'` skipping loading');
+                            }
+                            
+                            _self.load(dep.series,dep.files)
+                                .then(function(){ next(); })
+                                .catch(function(err){ next(err); });
+                            
+                        },function(errors,results){
+                            $timeout(function() {
                                 if(errors){
                                     reject(errors);
                                 }else{
                                     resolve();
                                 }
                             });
-						});
-						
-					});
-					
-				},
+                        });
+                        
+                    });
+                    
+                },
 
                 // String uuid_v4()
                 // Taken from: http://stackoverflow.com/a/2117523/2401804
@@ -315,21 +315,29 @@
                 },
                 
                 // flatten( Array arr )
-				// Taken from: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/Reduce#Flatten_an_array_of_arrays
+                // Taken from: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/Reduce#Flatten_an_array_of_arrays
                 flatten: function( arr ){
                     var _self = this;
                     return arr.reduce(function(acc, val){ 
                         return acc.concat( Array.isArray(val) ? _self.flatten(val) : val );
                     },[]);
                 },
-				
-				// random_int( Number min, Number max)
-				// Taken from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random#Getting_a_random_integer_between_two_values_inclusive
-				random_int: function( min, max ){
-					min = Math.ceil(min);
-					max = Math.floor(max);
-					return Math.floor(Math.random() * (max - min + 1)) + min;
-				}
+                
+                // random_int( Number min, Number max )
+                // Taken from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random#Getting_a_random_integer_between_two_values_inclusive
+                random_int: function( min, max ){
+                    min = Math.ceil(min);
+                    max = Math.floor(max);
+                    return Math.floor(Math.random() * (max - min + 1)) + min;
+                },
+                
+                // slugify( String text )
+                slugify: function( text ){
+                    return text.toString().toLowerCase().trim()
+                    .replace(/&/g, '-and-')
+                    .replace(/[\s\W-]+/g, '-')
+                    .replace(/^-+|-+$/g, '');
+                }
                 
             };
             
@@ -378,6 +386,6 @@
             return str.join(' ');
         }
     });
-	
-	
+    
+    
 }(angular);
