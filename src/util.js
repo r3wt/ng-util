@@ -397,7 +397,7 @@
     // filters
 
     // same as php uc_words() function. capitalizes every word in string.
-    // <span>{{ someProperty|uc_words }}</span> 
+    // <span> {{ someProperty|uc_words }} </span> 
     .filter('uc_words', function() {
         return function(input) {
             var str = [];
@@ -406,8 +406,16 @@
                 if(!!a[i]) str.push(a[i].charAt(0).toUpperCase() + a[i].substr(1).toLowerCase());
             }
             return str.join(' ');
-        }
-    });
+        };
+    })
+    
+    // approximate_count similar to way twitter and stackoverflow format followers/reputation
+    // <span> {{ someNumber|approximate_count }} followers </span>
+    .filter('approximate_count',['$util',function($util){
+        return function(input){
+            return $util.approximate_count(input);
+        };
+    }]);
     
     
 }(angular);
