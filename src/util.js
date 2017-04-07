@@ -87,11 +87,11 @@
         this.dependencies = function( dependencies ) {
 
             for(var dependency in dependencies){
-                for(var prop in dependencyDefaults){
+                for(var prop in _dependencyDefaults){
                     if(dependencies[dependency].hasOwnProperty(prop)){
                         _deps[dependency][prop] = dependencies[dependency][prop];
                     }else{
-                        _deps[dependency][prop] = dependencyDefaults[prop];
+                        _deps[dependency][prop] = _dependencyDefaults[prop];
                     }
                 }
             }
