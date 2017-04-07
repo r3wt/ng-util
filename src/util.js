@@ -87,6 +87,7 @@
         this.dependencies = function( dependencies ) {
 
             for(var dependency in dependencies){
+                _deps[dependency] = {};
                 for(var prop in _dependencyDefaults){
                     if(dependencies[dependency].hasOwnProperty(prop)){
                         _deps[dependency][prop] = dependencies[dependency][prop];
@@ -95,7 +96,6 @@
                     }
                 }
             }
-            
         };
         
         this.$get = ['$q',function($q){
@@ -282,7 +282,7 @@
                             var dep = _deps[dependency] || false;
                             
                             if(!dep){
-                                $log.warn('bad dependency `'+dependency+'` skipping loading');
+                                console.log('bad dependency `'+dependency+'` skipping loading');
                             }
                             
                             _self.load(dep.series,dep.files)
