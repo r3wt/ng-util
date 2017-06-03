@@ -398,9 +398,7 @@
     // approximate_count similar to way twitter and stackoverflow format followers/reputation
     // <span> {{ someNumber|approximate_count }} followers </span>
     .filter('approximate_count',['$util',function($util){
-        return function(input){
-            return $util.approximate_count(input);
-        };
+        return $util.approximate_count;
     }]);
     
     
