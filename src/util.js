@@ -4,7 +4,7 @@
  * @license MIT
  * @version 1.0.10
  */
-!function(angular){
+!function(angular,document){
     
     var mod = angular.module('ng-util',[]);
 
@@ -69,6 +69,8 @@
             cacheBust: false,
             extend: function(){}
         };
+		
+		var _date = (new Date()).getTime();
         
         var _deps = {};
         
@@ -177,47 +179,35 @@
                 // void loadOne( String type, String url, Function cb, Function err )
                 loadOne: function( type, url, cb, err ) {
                     
-                    if(!cb){
-                        cb = function(){};
-                    }
-                    if(!err){
-                        err = function(){};
-                    }
+                    cb = cb || function(){};
+                    err = err || function(){};
+					
+					if(_config.cacheBust) url +='?_v='+_date;
                     
-                    var types = ['script','link'];
-                    if(types.indexOf(type) == -1){
-                        throw new Error('only scripts and links supported');
-                    }
-                    
-                    var id = url.replace(/\W+/g, "");
-                    
-                    if(_config.cacheBust){
-                        url +='?_v='+(new Date()).getTime();
-                    }
-                    
-                    if(!angular.element(document.getElementById(id)).length){
+                    if(angular.element(document.querySelectorAll('script[src="'+url+'"],link[href="'+url+'"]')).length){
+						//already loaded.
+						cb();
+					}else{
+						
                         var el = document.createElement(type);
                         if(type == 'link'){
                             
                             el.rel = 'stylesheet';
                             el.href = url;
-                            el.id = id;
                             document.head.appendChild(el);
                             cb();
-                        }
-                        else if(type == 'script'){
+							
+                        }else if(type == 'script'){
                             
-                            el.id = id;
                             el.src = url;
                             el.addEventListener('load',function(){
                                 cb();
                             },false);
                             el.addEventListener('error',function(){ err(arguments); },false);
                             document.body.appendChild(el);
-                        }
-                    }else{
-                        
-                        cb();
+                        }else{
+							throw new Error('only scripts and links supported');
+						}
                     }
                 },
                 
@@ -233,7 +223,7 @@
                     var items = args;
                     //if first argument is sync or async or true false, treat is an instruction.
                     var first = items[0];
-                    if([true,false,'sync','async'].indexOf(first) != -1){
+                    if([true,false,'sync','async'].indexOf(items[0]) != -1){
                         items.shift();//remove first item
                         iteratorType = first == true ? 'sync' : first == 'sync' ? 'sync' : 'async';
                     }
@@ -414,4 +404,4 @@
     }]);
     
     
-}(angular);
+}(angular,document);
