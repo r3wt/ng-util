@@ -86,13 +86,14 @@ var app = angular.module('myApp',['$util']);
 app.config(['$utilProvider',function($utilProvider){
 
 	$utilProvider.config({
-		cacheBust: true, // cache busting when loading modules
+		cacheBust: true, // cache busting - useful for development. appends ?_v= to query string, ensuring new code always loaded regardless of cacheing.
 		extend: function($util){
 			//extend the service
 			$util.foo = function(){
 				console.log('hello world!');
 			};
-		}
+		},
+		version: '1.0.0' // file versioning - useful for production. appends ?v= to path as query string, offering fine grain control over cache invalidation.
 	});
 	
 }]);
