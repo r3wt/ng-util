@@ -202,7 +202,7 @@
                     
                     if(_config.version) params.v = config.version;
                     
-                    if(_config.cacheBust) params._v = date;
+                    if(_config.cacheBust) params._v = _date;
                     
                     url += qs(params);//add query string.
                     
