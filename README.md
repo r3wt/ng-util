@@ -185,6 +185,15 @@ app.config(['$utilProvider','$stateProvider',function($utilProvider,$stateProvid
 8. `random_int` - Number random_int( Number min, Number max )
 	> generates a random int between min and max (inclusive)
 
+9. `slugify` - String slugify( String text )
+	> creates an seo friendly "slugified" url from a string
+
+10. `approximate_count` - String approximate_count( Number number )
+	> human readable number formatting like on facebook, twitter, stackoverflow, etc eg.( `943`,`1,352`,`5.8m`, `3.4k` )
+
+11. `query_str` - String query_str( Obj queryParams )
+	> Object to query string (non nested, simple objects only). output includes `?` prefix
+
 	
 ### directives
 ------
@@ -198,4 +207,8 @@ app.config(['$utilProvider','$stateProvider',function($utilProvider,$stateProvid
 
 1. `uc_words` 
 	> same as the uc_words() function in php. it capitalized every word in a string and returns the resultant string.
-	> usage `<span>{{ title|uc_words }}`
+	> usage `<span>{{ title|uc_words }}</span>`
+	
+2. `approximate_count` 
+	> see docs for `$util.approximate_count()`
+	> usage `<span>{{ user.followers|approximate_count }}</span>`

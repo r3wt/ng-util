@@ -67,10 +67,11 @@
         
         var _config = {
             cacheBust: false,
-            extend: function(){}
+            extend: function(){},
+            version: false,//if not false, set a version to be appended to files. useful for updating production deployments.
         };
-		
-		var _date = (new Date()).getTime();
+        
+        var _date = (new Date()).getTime();
         
         var _deps = {};
         
@@ -99,6 +100,21 @@
                 }
             }
         };
+        
+        
+        //taken from https://stackoverflow.com/a/5505137/2401804
+        var qs = function toQueryString(obj) {
+            var parts = [];
+            for (var i in obj) {
+                if (obj.hasOwnProperty(i)) {
+                    parts.push(encodeURIComponent(i) + "=" + encodeURIComponent(obj[i]));
+                }
+            }
+            var str = parts.join("&");
+            if(str.length) str = '?'+str;
+            return str;
+        };
+        //end accreditation
         
         this.$get = ['$q',function($q){
         
@@ -181,14 +197,20 @@
                     
                     cb = cb || function(){};
                     err = err || function(){};
-					
-					if(_config.cacheBust) url +='?_v='+_date;
+                    
+                    var params = {};
+                    
+                    if(_config.version) params.v = config.version;
+                    
+                    if(_config.cacheBust) params._v = date;
+                    
+                    url += qs(params);//add query string.
                     
                     if(angular.element(document.querySelectorAll('script[src="'+url+'"],link[href="'+url+'"]')).length){
-						//already loaded.
-						cb();
-					}else{
-						
+                        //already loaded.
+                        cb();
+                    }else{
+                        
                         var el = document.createElement(type);
                         if(type == 'link'){
                             
@@ -196,7 +218,7 @@
                             el.href = url;
                             document.head.appendChild(el);
                             cb();
-							
+                            
                         }else if(type == 'script'){
                             
                             el.src = url;
@@ -206,8 +228,8 @@
                             el.addEventListener('error',function(){ err(arguments); },false);
                             document.body.appendChild(el);
                         }else{
-							throw new Error('only scripts and links supported');
-						}
+                            throw new Error('only scripts and links supported');
+                        }
                     }
                 },
                 
@@ -345,7 +367,10 @@
                     }
 
                     return formatted.toString();
-                }
+                },
+                
+                // query_str( Obj queryParams )
+                query_str: qs //expose objToQueryString
                 
             };
             
