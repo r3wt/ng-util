@@ -99,6 +99,7 @@
                     }
                 }
             }
+            
         };
         
         
@@ -116,6 +117,46 @@
         };
         //end accreditation
         
+        // function cookie(){}
+        // cookie.prototype = {
+            // all: function( one ){
+                // var ca = document.cookie.split(';');
+                // var ob = {};
+                // for(var i=0;i<ca.length;i++){
+                    // var c = ca[i];
+                    // var j = 0;
+                    // while(c[j] != '='){
+                        // j++;
+                    // }
+                    // ob[ c.substr(0,j-1) ] = c.substr(j+1,c.length);
+                // }
+                // return ob;
+            // },
+            // set: function(name,value,days) {
+              // if (days) {
+                // var date = new Date();
+                // date.setTime(date.getTime()+(days*24*60*60*1000));
+                // var expires = "; expires="+date.toGMTString();
+              // }else{
+                // var expires = ""; 
+              // } 
+              // document.cookie = name+"="+value+expires+"; path=/";
+            // },
+            // get: function(name) {
+              // var nameEQ = name + "=";
+              // var ca = document.cookie.split(';');
+              // for(var i=0;i < ca.length;i++) {
+                // var c = ca[i];
+                // while (c.charAt(0)==' ') c = c.substring(1,c.length);
+                // if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+              // }
+              // return null;
+            // },
+            // remove: function(name) {
+              // this.create(name,"",-1);
+            // }
+        // };
+        
         this.$get = ['$q',function($q){
         
             function $util(){
@@ -126,7 +167,7 @@
                 
             }
             
-            var Util = {
+            $util.prototype = {
                 
                 // void async( Array items, Function eachFn, Function callbackFn )
                 async: function( items, eachFn, callbackFn ){
@@ -200,7 +241,7 @@
                     
                     var params = {};
                     
-                    if(_config.version) params.v = config.version;
+                    if(_config.version) params.v = _config.version;
                     
                     if(_config.cacheBust) params._v = _date;
                     
@@ -370,11 +411,22 @@
                 },
                 
                 // query_str( Obj queryParams )
-                query_str: qs //expose objToQueryString
+                query_str: qs, //expose objToQueryString
+                
+                // cookie( String key, String value, Number expiration )
+                // cookie: function(k,v,e){
+                    // if(arguments.length == 0){
+                        // return c.all();
+                    // }
+                    // if(angular.isDefined(k)){
+                        // if(angular.isDefined(v)){
+                            // return c.set(k,v,e);
+                        // }
+                        // return c.get(k);
+                    // }
+                // }
                 
             };
-            
-            $util.prototype = Util;
             
             return new $util();
             
@@ -404,6 +456,68 @@
             }
         };
     })
+    
+    
+    // adds simple drag and drop file api listeners.
+    // <input ng-file-dropped="someFunc(files)" ng-file-over="someFunc(e)" ng-file-enter="someFunc(e)" ng-file-leave="someFunc(e)" >
+    // .directive('ngFileDropped',function($parse) {
+        // return {
+            // restrict: 'A',
+            // link: function(scope,element,attrs){
+
+                // //proxies an event to scope function, preventing it from bubbling.
+                // function proxyEventToScopeFn( attr ){
+                    // return function(e) {
+                      // if(attr){
+                          // $parse(attrs[attr])(scope,{ e: e });
+                      // }
+                      // return false;
+                    // }    
+                // }
+                
+                
+                // var dragOver = proxyEventToScopeFn( attr.ngFileOver ? 'ngFileOver' : false );
+                // var dragEnter = proxyEventToScopeFn( attr.ngFileEnter ? 'ngFileEnter' : false );
+                // var dragLeave = proxyEventToScopeFn( attr.ngFileLeave ? 'ngFileLeave' : false );
+
+                // // Tells the browser that we *can* drop on this target
+                // element[0].addEventListener('dragover', dragOver);
+                // element[0].addEventListener('dragenter', dragEnter);
+                // element[0].addEventListener('dragleave', dragLeave);
+
+                // element[0].addEventListener('drop', function(e){
+                    // e.preventDefault();
+                    // try{
+
+                        // // If dropped items aren't files, reject them
+                        // var dt = e.dataTransfer;
+                        // var files = [];
+                        // if (dt.items) {
+                            // // Use DataTransferItemList interface to access the file(s)
+                            // for (var i=0; i < dt.items.length; i++) {
+                                // if (dt.items[i].kind == "file") {
+                                    // files.push(dt.items[i].getAsFile());
+                                // }
+                            // }
+                        // } else {
+                            // files = dt.files.slice();
+                        // }
+                        // if(files && files.length){
+                            // scope.$apply(function(){
+                                // var fn = $parse(attrs.ngFiledropped);
+                                // fn(scope,{ files: files });
+                            // });
+                        // }
+
+                    // }
+                    // catch(err){
+                        // console.log(err);
+                    // }
+                    // return false;
+                // });
+            // }
+        // };
+    // })
 
     // filters
 
