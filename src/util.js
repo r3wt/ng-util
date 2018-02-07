@@ -45,14 +45,11 @@
                     for(var i=0;i<d.length;i++){
                         c = c[d[i]];// recurse until reaching the function
                     }
-                    //now inject the function into an IIFE so we ensure its scoped properly
-                    //im not sure this is actually needed but i'm wary of for loops.
-                    !function(app,type,c){
-                        app[type] = function(){
-                            c.apply(this,arguments);
-                            return this;//return the app instance for chaining.
-                        }.bind(app);    
-                    }(app,type,c);
+                    //overriding the angular functions with our proxies.
+                    app[type] = function(){
+                        c.apply(this,arguments);
+                        return this;//return the app instance for chaining.
+                    }.bind(app);    
                 }   
                 bootStrapped.push(arguments[0]);//mark this instance as properly monkey patched
             }
@@ -104,7 +101,7 @@
         
         
         //taken from https://stackoverflow.com/a/5505137/2401804
-        var qs = function toQueryString(obj) {
+        var qs = function(obj) {
             var parts = [];
             for (var i in obj) {
                 if (obj.hasOwnProperty(i)) {
@@ -117,47 +114,70 @@
         };
         //end accreditation
         
-        // function cookie(){}
-        // cookie.prototype = {
-            // all: function( one ){
-                // var ca = document.cookie.split(';');
-                // var ob = {};
-                // for(var i=0;i<ca.length;i++){
-                    // var c = ca[i];
-                    // var j = 0;
-                    // while(c[j] != '='){
-                        // j++;
-                    // }
-                    // ob[ c.substr(0,j-1) ] = c.substr(j+1,c.length);
-                // }
-                // return ob;
-            // },
-            // set: function(name,value,days) {
-              // if (days) {
-                // var date = new Date();
-                // date.setTime(date.getTime()+(days*24*60*60*1000));
-                // var expires = "; expires="+date.toGMTString();
-              // }else{
-                // var expires = ""; 
-              // } 
-              // document.cookie = name+"="+value+expires+"; path=/";
-            // },
-            // get: function(name) {
-              // var nameEQ = name + "=";
-              // var ca = document.cookie.split(';');
-              // for(var i=0;i < ca.length;i++) {
-                // var c = ca[i];
-                // while (c.charAt(0)==' ') c = c.substring(1,c.length);
-                // if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
-              // }
-              // return null;
-            // },
-            // remove: function(name) {
-              // this.create(name,"",-1);
-            // }
-        // };
+        //tiny time parser
+        var timeParse = function(t) {
+            if(typeof t == 'string'){
+                t=t.replace(/\s+/g,'');
+                t=t.replace(/min(utes|ute|s)?/i,'m');
+                t=t.replace(/day(s)?/i,'d');
+                t=t.replace(/sec(onds|ond|s)?/i,'s');
+                t=t.replace(/hour(s)?/i,'h');
+                t=t.replace(/y(ea)?r(s)?/i,'y');
+                var m = t.match(/^(\d+)(ms|s|m|h|d|y)$/i);
+                if(m instanceof Array && m.length == 3){
+                    var a = ~~m[1],
+                        b = m[2].toLowerCase(),
+                        c = {
+                            ms: 1,
+                            s : 1000,
+                            m : 60000,
+                            h : 3.6e+6,
+                            d : 3.6e+6 * 24,
+                            y : (3.6e+6 * 24) * 364.25
+                        };
+                    t = a * c[b];
+                }else{
+                    t = -1;
+                }
+            }
+            if(typeof t != 'number'){
+                t = -1;
+            }
+            return t;
+        };
         
-        this.$get = ['$q',function($q){
+        var cookie = function(){};//no hoisting
+        cookie.prototype = {
+            set: function(name,value,expires) {
+              if(typeof expires === 'string'){
+                  expires = timeParse(expires);
+              }
+              document.cookie = name+"="+value+expires+"; path=/";
+            },
+            get: function( name ){
+                var ca = document.cookie.split(';');
+                var ob = {};
+                for(var i=0;i<ca.length;i++){
+                    var c = ca[i];
+                    var j = 0;
+                    while(c[j] != '='){
+                        j++;
+                    }
+                    var cb = c.substr(0,j-1);
+                    ob[ cb ] = c.substr(j+1,c.length);
+                    
+                    if(name && cb == name){
+                        return ob[cb];
+                    }
+                }
+                return ob;
+            },
+            remove: function(name) {
+              this.set(name,"",-1);
+            }
+        };
+        
+        this.$get = ['$q',function($q,$util){
         
             function $util(){
                 
@@ -177,8 +197,8 @@
                         results = new Array(itemsLength).fill(null),
                         errors = new Array(itemsLength).fill(null);
                     
-                    function loop(i,item){
-                        function next( error, result ){
+                    var loop = function(i,item){
+                        var next = function( error, result ){
                             if(error){
                                 errors[i] = error;
                             } 
@@ -194,9 +214,9 @@
                                 }
                                 callbackFn(errors,results);
                             }
-                        }
+                        };
                         eachFn(item,next);
-                    }
+                    };
                     
                     for(i;i<itemsLength;i++){
                         loop(i,items[i]);
@@ -209,7 +229,7 @@
                     var results = [], 
                         errors = [];
                         
-                    function next(error,result){
+                    var next = function (error,result){
                         if(error != null) {
                             errors.push(error);
                         }
@@ -268,6 +288,7 @@
                             },false);
                             el.addEventListener('error',function(){ err(arguments); },false);
                             document.body.appendChild(el);
+                            
                         }else{
                             throw new Error('only scripts and links supported');
                         }
@@ -277,19 +298,18 @@
                 // Promise load( Array files )
                 load: function (){
                     
-                    args = Array.prototype.slice.call(arguments);
-                    
-                    args = this.flatten(args);//flatten args
-                    
-                    var iteratorType = 'async';
-                    
-                    var items = args;
+                    var items = this.flatten(
+                        Array.prototype.slice.call(arguments)
+                    );
+
                     //if first argument is sync or async or true false, treat is an instruction.
                     var first = items[0];
+                    
                     if([true,false,'sync','async'].indexOf(items[0]) != -1){
                         items.shift();//remove first item
-                        iteratorType = first == true ? 'sync' : first == 'sync' ? 'sync' : 'async';
                     }
+                    
+                    var iteratorType = ( (first == true || first == 'sync') ? 'sync' : 'async' );
 
                     var _self = this;
 
@@ -306,7 +326,6 @@
                             else if(item.indexOf('.css') != -1){
                                 _self.loadOne('link',item,next);
                             }else{
-                                
                                 next();
                             }
                         },function(errors,results){
@@ -323,14 +342,15 @@
                 // Promise loadDeps( Array dependencies )
                 loadDeps: function(){
                     
-                    args = Array.prototype.slice.call(arguments);
-                    args = this.flatten(args);//flatten args
+                    var items = this.flatten(
+                        Array.prototype.slice.call(arguments)
+                    );
                     
                     var _self = this;
                     
                     return $q(function(resolve,reject){
                         
-                        _self.async(args,function(dependency,next){
+                        _self.async(items,function(dependency,next){
                         
                             var dep = _deps[dependency] || false;
                             
@@ -413,18 +433,22 @@
                 // query_str( Obj queryParams )
                 query_str: qs, //expose objToQueryString
                 
-                // cookie( String key, String value, Number expiration )
-                // cookie: function(k,v,e){
-                    // if(arguments.length == 0){
-                        // return c.all();
-                    // }
-                    // if(angular.isDefined(k)){
-                        // if(angular.isDefined(v)){
-                            // return c.set(k,v,e);
-                        // }
-                        // return c.get(k);
-                    // }
-                // }
+                // simple cookie functions
+                cookie: cookie,
+                
+                //parse time in milliseconds from string
+                // time_str( String time )
+                time_str: timeParse,
+                
+                //listen for plain events on elements and proxy the event to scope function.
+                // proxy_event( angular.Element element, String event, angular.Scope scope, String fn )
+                proxy_event: function( element, event, scope, fn ){
+                    element[0].addEventListener(event,function(e) {
+                      if(fn){
+                          $parse(attrs[fn])(scope,{ e: e });//event is fully delegated. target function responsible for its lifecycle.
+                      }
+                    });
+                }
                 
             };
             
@@ -435,6 +459,30 @@
     })
 
     //directives
+    
+    //allows user to define proxied events on the given element
+    // <input ng-proxied-events="configObject" />
+    .directive('ngProxiedEvents',function($util){
+        return {
+            restrict: 'A',
+            link: function(scope,element, attrs){
+                var config = scope.ngProxiedEvents;
+                /* config = {
+                    'eventName':'functionName',
+                    'eventName2':['function1','function2','function3']
+                } */
+                
+                for(var event in config){
+                    if(!(config[event] instanceof Array)){
+                        config[event] = [config[event]];
+                    }
+                    for(var i=0;i<config[event].length;i++){
+                        $util.proxy_event(element,event,scope,config[event][i]);
+                    }
+                }
+            }
+        };
+    })
 
     // adds filechange listener to file elements, curiously missing from angularjs
     // <input ng-filechange="someFunc(files)" />
@@ -460,64 +508,48 @@
     
     // adds simple drag and drop file api listeners.
     // <input ng-file-dropped="someFunc(files)" ng-file-over="someFunc(e)" ng-file-enter="someFunc(e)" ng-file-leave="someFunc(e)" >
-    // .directive('ngFileDropped',function($parse) {
-        // return {
-            // restrict: 'A',
-            // link: function(scope,element,attrs){
-
-                // //proxies an event to scope function, preventing it from bubbling.
-                // function proxyEventToScopeFn( attr ){
-                    // return function(e) {
-                      // if(attr){
-                          // $parse(attrs[attr])(scope,{ e: e });
-                      // }
-                      // return false;
-                    // }    
-                // }
+    .directive('ngFileDropped',function($parse,$util) {
+        return {
+            restrict: 'A',
+            link: function(scope,element,attrs){
                 
-                
-                // var dragOver = proxyEventToScopeFn( attr.ngFileOver ? 'ngFileOver' : false );
-                // var dragEnter = proxyEventToScopeFn( attr.ngFileEnter ? 'ngFileEnter' : false );
-                // var dragLeave = proxyEventToScopeFn( attr.ngFileLeave ? 'ngFileLeave' : false );
+                $util.proxy_event(element, 'dragover', scope, attr.ngFileOver ? 'ngFileOver' : false );
+                $util.proxy_event(element, 'dragenter', scope, attr.ngFileOver ? 'ngFileEnter' : false );
+                $util.proxy_event(element, 'dragleave', scope, attr.ngFileOver ? 'ngFileLeave' : false );
 
-                // // Tells the browser that we *can* drop on this target
-                // element[0].addEventListener('dragover', dragOver);
-                // element[0].addEventListener('dragenter', dragEnter);
-                // element[0].addEventListener('dragleave', dragLeave);
+                element[0].addEventListener('drop', function(e){
+                    e.preventDefault();
+                    try{
 
-                // element[0].addEventListener('drop', function(e){
-                    // e.preventDefault();
-                    // try{
+                        // If dropped items aren't files, reject them
+                        var dt = e.dataTransfer;
+                        var files = [];
+                        if (dt.items) {
+                            // Use DataTransferItemList interface to access the file(s)
+                            for (var i=0; i < dt.items.length; i++) {
+                                if (dt.items[i].kind == "file") {
+                                    files.push(dt.items[i].getAsFile());
+                                }
+                            }
+                        } else {
+                            files = dt.files.slice();
+                        }
+                        if(files && files.length){
+                            scope.$apply(function(){
+                                var fn = $parse(attrs.ngFiledropped);
+                                fn(scope,{ files: files });
+                            });
+                        }
 
-                        // // If dropped items aren't files, reject them
-                        // var dt = e.dataTransfer;
-                        // var files = [];
-                        // if (dt.items) {
-                            // // Use DataTransferItemList interface to access the file(s)
-                            // for (var i=0; i < dt.items.length; i++) {
-                                // if (dt.items[i].kind == "file") {
-                                    // files.push(dt.items[i].getAsFile());
-                                // }
-                            // }
-                        // } else {
-                            // files = dt.files.slice();
-                        // }
-                        // if(files && files.length){
-                            // scope.$apply(function(){
-                                // var fn = $parse(attrs.ngFiledropped);
-                                // fn(scope,{ files: files });
-                            // });
-                        // }
-
-                    // }
-                    // catch(err){
-                        // console.log(err);
-                    // }
-                    // return false;
-                // });
-            // }
-        // };
-    // })
+                    }
+                    catch(err){
+                        console.log(err);
+                    }
+                    return false;
+                });
+            }
+        };
+    })
 
     // filters
 
@@ -525,6 +557,8 @@
     // <span> {{ someProperty|uc_words }} </span> 
     .filter('uc_words', function() {
         return function(input) {
+            if(typeof input != string)
+                return input;
             var str = [];
             var a = input.split(' ');
             for(var i=0;i<a.length;i++){
