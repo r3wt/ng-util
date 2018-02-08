@@ -525,6 +525,7 @@
     // <span> {{ someProperty|uc_words }} </span> 
     .filter('uc_words', function() {
         return function(input) {
+            if(typeof input != 'string') return input;//fix type errors
             var str = [];
             var a = input.split(' ');
             for(var i=0;i<a.length;i++){
